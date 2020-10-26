@@ -5,10 +5,10 @@ import it.iVirus.premiumdomainrg.bungee.PremiumDomainRG;
 import it.iVirus.premiumdomainrg.bungee.util.Colors;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -28,21 +28,21 @@ public class PlayerListener implements Listener {
         if ((premium.contains(e.getConnection().getName())) && !(PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
             e.getConnection().disconnect(new TextComponent(Colors.color(plugin.getConfig().getString("JoinFromPremium")
                     .replaceAll("%domain_premium%", PremiumDomainRG.getInstance().getPremiumDomains().get(0)))));
+            return;
         }
         if (!(premium.contains(e.getConnection().getName())) && (PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
             e.getConnection().disconnect(new TextComponent(Colors.color(plugin.getConfig().getString("JoinFromCrack")
                     .replaceAll("%domain_crack%", plugin.getConfig().getString("DomainCrack")))));
         }
-
     }
 
-    @EventHandler
+    @EventHandler(priority = -128)
     public void onPlayerLogin(LoginEvent e){
         PendingConnection c = e.getConnection();
         if (c.isOnlineMode()) {
             UUID offuuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + c.getName()).getBytes(Charsets.UTF_8));
             Class<?> initialHandlerClass = c.getClass();
-            Field uniqueIdField = null;
+            Field uniqueIdField;
             try {
                 uniqueIdField = initialHandlerClass.getDeclaredField("uniqueId");
                 uniqueIdField.setAccessible(true);
