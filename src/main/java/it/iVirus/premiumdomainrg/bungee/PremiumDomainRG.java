@@ -3,7 +3,8 @@ package it.iVirus.premiumdomainrg.bungee;
 import com.google.common.io.ByteStreams;
 import it.iVirus.premiumdomainrg.bungee.database.Database;
 import it.iVirus.premiumdomainrg.bungee.listeners.PlayerListener;
-import it.iVirus.premiumdomainrg.bungee.pdcommand.Command;
+import it.iVirus.premiumdomainrg.bungee.pdcommand.AdminCommand;
+import it.iVirus.premiumdomainrg.bungee.pdcommand.PDCommand;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -22,40 +23,35 @@ public class PremiumDomainRG extends Plugin {
     private Configuration config;
     private Database connector;
     private File configFile;
-    private List<String> premiumDomains = new ArrayList<>();
+    private final List<String> premiumDomains = new ArrayList<>();
+    private final List<String> premiumPlayers = new ArrayList<>();
 
     @Override
     public void onEnable() {
         instance = this;
         createConfig();
-        String database = getConfig().getString("MySQL.Database");
-        String table = getConfig().getString("MySQL.Table");
-        String username = getConfig().getString("MySQL.Username");
-        String password = getConfig().getString("MySQL.Password");
-        String host = getConfig().getString("MySQL.Host");
-        boolean ssl = getConfig().getBoolean("MySQL.SSL");
-        int port = getConfig().getInt("MySQL.Port");
-        connector = new Database(database, table, username, password, host, port, ssl);
+
+        connector = new Database();
         connector.setup();
         premiumDomains.addAll(config.getStringList("DomainPremium"));
-        getConfig().getStringList("Premium").forEach(connector::newPremium);
-        getProxy().getPluginManager().registerCommand(this, new Command("premium"));
+        premiumPlayers.addAll(getConfig().getStringList("Premium"));
+        premiumPlayers.forEach(connector::newPremiumDb);
+        getProxy().getPluginManager().registerCommand(this, new PDCommand("premium"));
+        getProxy().getPluginManager().registerCommand(this, new AdminCommand("apdrg"));
         ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerListener());
 
-
-
-        getProxy().getScheduler().schedule (this, () -> {
+        getProxy().getScheduler().schedule(this, () -> {
             try {
                 connector.getConnection().close();
                 connector.resumeConnection();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        },10 , getConfig().getInt("resumeTask"), TimeUnit.SECONDS);
+        }, 10, getConfig().getInt("resumeTask"), TimeUnit.SECONDS);
 
     }
 
-    public List<String> getPremiumDomains(){
+    public List<String> getPremiumDomains() {
         return premiumDomains;
     }
 
@@ -95,11 +91,11 @@ public class PremiumDomainRG extends Plugin {
         return connector;
     }
 
-    public File getConfigFile(){
+    public File getConfigFile() {
         return configFile;
     }
 
-    public void save(){
+    public void save() {
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(getConfig(), getConfigFile());
         } catch (IOException e) {
@@ -107,7 +103,7 @@ public class PremiumDomainRG extends Plugin {
         }
     }
 
-    public void reload(){
+    public void reloadConfig() {
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(getConfigFile());
         } catch (IOException e) {
@@ -115,4 +111,19 @@ public class PremiumDomainRG extends Plugin {
         }
     }
 
+    public void reload() {
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(getConfigFile());
+            premiumPlayers.clear();
+            premiumDomains.clear();
+            premiumDomains.addAll(config.getStringList("DomainPremium"));
+            premiumPlayers.addAll(getConfig().getStringList("Premium"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getPremiumPlayers() {
+        return premiumPlayers;
+    }
 }

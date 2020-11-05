@@ -2,13 +2,12 @@ package it.iVirus.premiumdomainrg.bungee.listeners;
 
 import com.google.common.base.Charsets;
 import it.iVirus.premiumdomainrg.bungee.PremiumDomainRG;
-import it.iVirus.premiumdomainrg.bungee.util.Colors;
+import it.iVirus.premiumdomainrg.bungee.util.PDUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -26,12 +25,12 @@ public class PlayerListener implements Listener {
             e.getConnection().setOnlineMode(true);
         }
         if ((premium.contains(e.getConnection().getName())) && !(PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
-            e.getConnection().disconnect(new TextComponent(Colors.color(plugin.getConfig().getString("JoinFromPremium")
+            e.getConnection().disconnect(new TextComponent(PDUtils.color(plugin.getConfig().getString("JoinFromPremium")
                     .replaceAll("%domain_premium%", PremiumDomainRG.getInstance().getPremiumDomains().get(0)))));
             return;
         }
         if (!(premium.contains(e.getConnection().getName())) && (PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
-            e.getConnection().disconnect(new TextComponent(Colors.color(plugin.getConfig().getString("JoinFromCrack")
+            e.getConnection().disconnect(new TextComponent(PDUtils.color(plugin.getConfig().getString("JoinFromCrack")
                     .replaceAll("%domain_crack%", plugin.getConfig().getString("DomainCrack")))));
         }
     }

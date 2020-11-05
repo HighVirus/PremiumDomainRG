@@ -1,4 +1,13 @@
 #PremiumDomainRG by iVirus_
+NoPermission: "&cYou do not have permission to do that"
+AdminHelp:
+  - "&7&m----------------------------"
+  - "&c/apdrg remove [&7player&c] &7to remove player from premium list"
+  - "&c/apdrg reload &7to reload configs"
+  - "&7&m----------------------------"
+AdminRemoveUser: "&7User removed from premium list"
+AdminUserNotFound: "&cError: User not found"
+Reload: "&7Config reloaded"
 resumeTask: 300 #to not allow database disconnection
 MySQL:
   Database: "PremiumDomainRG"
