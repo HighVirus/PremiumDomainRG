@@ -8,7 +8,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PDCommand extends Command {
@@ -34,17 +33,6 @@ public class PDCommand extends Command {
             }
         } else {
             confirm.remove(p.getName());
-            /*List<String> playersPremium = plugin.getConfig().getStringList("Premium");
-            if (playersPremium.contains(p.getName())) {
-                p.sendMessage(new TextComponent(PDUtils.color(plugin.getConfig().getString("AlreadyPremium"))));
-                return;
-            }
-            playersPremium.add(p.getName());
-            plugin.getConfig().set("Premium", playersPremium);
-            plugin.save();
-            plugin.reload();
-            plugin.getConnector().newPremium(p.getName());*/
-
             if (PDUtils.addPremium(p.getName())) {
                 p.disconnect(new TextComponent(PDUtils.color(plugin.getConfig().getString("LogAgain")
                         .replaceAll("%domain_premium%", PremiumDomainRG.getInstance().getPremiumDomains().get(0)))));
