@@ -1,5 +1,0 @@
-name: PremiumDomainRG
-version: ${project.version}
-author: iVirus_
-description: Autologin for PremiumDomainRG
-main: it.iVirus.premiumdomainrg.spigot.PremiumDomainRG

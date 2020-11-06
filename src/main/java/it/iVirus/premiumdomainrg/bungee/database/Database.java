@@ -31,7 +31,8 @@ public class Database {
                     return;
                 }
                 Class.forName("com.mysql.jdbc.Driver");
-                setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
+                setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
+                        "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
                 PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + this.table + "` " +
                         "(ID int NOT NULL AUTO_INCREMENT,`Player` VARCHAR(100),PRIMARY KEY (ID), unique (Player))");
                 statement.executeUpdate();
@@ -64,7 +65,8 @@ public class Database {
     public void resumeConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
+            setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
+                    "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -5,17 +5,17 @@ import java.sql.*;
 public class Database {
 
     private String database, table, username, password, host;
-    boolean ssl;
+    private boolean ssl;
     private int port;
 
-    public Database(String database, String table, String username, String password, String host, int port, boolean ssl) {
-        setDatabase(database);
-        setUsername(username);
-        setPassword(password);
-        setHost(host);
-        setTable(table);
-        setPort(port);
-        setSSL(ssl);
+    public Database() {
+        setDatabase();
+        setUsername();
+        setPassword();
+        setHost();
+        setTable();
+        setPort();
+        setSSL();
     }
 
 
@@ -24,13 +24,13 @@ public class Database {
     public void setup() {
         try {
             synchronized (this) {
-
                 if (getConnection() != null && !getConnection().isClosed()) {
                     return;
                 }
                 Class.forName("com.mysql.jdbc.Driver");
-                setConnection(DriverManager.getConnection("jdbc:mysql://" + getHost() + ":" + getPort() + "/" + getDatabase() + "?characterEncoding=latin1&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + getSSL(), getUsername(), getPassword()));
-                PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + getTable() + "` " +
+                setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
+                        "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
+                PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + this.table + "` " +
                         "(ID int NOT NULL AUTO_INCREMENT,`Player` VARCHAR(100),PRIMARY KEY (ID), unique (Player))");
                 statement.executeUpdate();
             }
@@ -42,7 +42,9 @@ public class Database {
     public void resumeConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            setConnection(DriverManager.getConnection("jdbc:mysql://" + getHost() + ":" + getPort() + "/" + getDatabase() + "?characterEncoding=latin1&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + getSSL(), getUsername(), getPassword()));
+            setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" +
+                    this.database + "?characterEncoding=latin1&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" +
+                    this.ssl, this.username, this.password));
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -50,7 +52,7 @@ public class Database {
 
     public boolean checkPremium(String player) {
         try {
-            PreparedStatement statement = getConnection().prepareStatement("SELECT * from " + getTable() + " where Player = ?");
+            PreparedStatement statement = getConnection().prepareStatement("SELECT * from " + this.table + " where Player = ?");
             statement.setString(1, player);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
@@ -64,64 +66,47 @@ public class Database {
         return connection;
     }
 
-    public void setConnection(Connection connection) {
+    private void setConnection(Connection connection) {
         this.connection = connection;
     }
 
-    public String getDatabase() {
-        return this.database;
+    private void setDatabase() {
+        this.database = PremiumDomainRG.getInstance().getConfig().getString("MySQL.Database");
     }
 
-    public String getUsername() {
-        return this.username;
+    private void setUsername() {
+        this.username = PremiumDomainRG.getInstance().getConfig().getString("MySQL.Username");
     }
 
-    public String getPassword() {
-        return this.password;
+    private void setPassword() {
+        this.password = PremiumDomainRG.getInstance().getConfig().getString("MySQL.Password");
     }
 
-    public String getHost() {
-        return this.host;
+    private void setHost() {
+        this.host = PremiumDomainRG.getInstance().getConfig().getString("MySQL.Host");
     }
 
-    public String getTable() {
-        return this.table;
+    private void setTable() {
+        this.table = PremiumDomainRG.getInstance().getConfig().getString("MySQL.Table");
     }
 
-    public int getPort() {
-        return this.port;
+    private void setPort() {
+        if (PremiumDomainRG.hasLetter(PremiumDomainRG.getInstance().getConfig().getString("MySQL.Port"))) {
+            PremiumDomainRG.getInstance().getLogger().severe("Port cannot contain letters!");
+            PremiumDomainRG.getInstance().getLogger().severe("Disabling...");
+            PremiumDomainRG.getInstance().getServer().getPluginManager().disablePlugin(PremiumDomainRG.getInstance());
+        } else
+            this.port = PremiumDomainRG.getInstance().getConfig().getInt("MySQL.Port");
     }
 
-    public boolean getSSL() {
-        return this.ssl;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setSSL(boolean ssl) {
-        this.ssl = ssl;
+    private void setSSL() {
+        if (!PremiumDomainRG.getInstance().getConfig().getString("MySQL.SSL").equalsIgnoreCase("true")
+                && !PremiumDomainRG.getInstance().getConfig().getString("MySQL.SSL").equalsIgnoreCase("false")) {
+            PremiumDomainRG.getInstance().getLogger().severe("SSL cannot be different from 'true' or 'false'!");
+            PremiumDomainRG.getInstance().getLogger().severe("Disabling...");
+            PremiumDomainRG.getInstance().getServer().getPluginManager().disablePlugin(PremiumDomainRG.getInstance());
+        } else
+            this.ssl = PremiumDomainRG.getInstance().getConfig().getBoolean("MySQL.SSL");
     }
 
 }

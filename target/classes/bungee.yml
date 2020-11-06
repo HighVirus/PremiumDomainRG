@@ -1,4 +1,0 @@
-name: PremiumDomainRG
-main: it.iVirus.premiumdomainrg.bungee.PremiumDomainRG
-version: ${project.version}
-author: iVirus

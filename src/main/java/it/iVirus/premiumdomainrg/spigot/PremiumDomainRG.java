@@ -18,14 +18,7 @@ public class PremiumDomainRG extends JavaPlugin implements Listener {
         instance = this;
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(this, this);
-        String database = getConfig().getString("MySQL.Database");
-        String table = getConfig().getString("MySQL.Table");
-        String username = getConfig().getString("MySQL.Username");
-        String password = getConfig().getString("MySQL.Password");
-        String host = getConfig().getString("MySQL.Host");
-        boolean ssl = getConfig().getBoolean("MySQL.SSL");
-        int port = getConfig().getInt("MySQL.Port");
-        connector = new Database(database, table, username, password, host, port, ssl);
+        connector = new Database();
         connector.setup();
         new BukkitRunnable() {
             @Override
@@ -40,6 +33,18 @@ public class PremiumDomainRG extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 0L, getConfig().getInt("resumeTask") * 20);
 
         getLogger().info("Enabled!");
+    }
+
+    public static Boolean hasLetter(String string){
+        char[] chars = string.toCharArray();
+        for(char c : chars)
+            if(Character.isLetter(c))
+                return true;
+        return false;
+    }
+
+    public static PremiumDomainRG getInstance(){
+        return instance;
     }
 
     @EventHandler
