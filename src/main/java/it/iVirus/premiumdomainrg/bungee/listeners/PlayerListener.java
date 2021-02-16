@@ -10,26 +10,23 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
-    private PremiumDomainRG plugin = PremiumDomainRG.getInstance();
-    private List<String> premium;
+    private final PremiumDomainRG plugin = PremiumDomainRG.getInstance();
 
     @EventHandler
     public void onProxyLogin(PreLoginEvent e) {
-        premium = plugin.getConfig().getStringList("Premium");
         String playerDomain = e.getConnection().getVirtualHost().getHostString().toLowerCase();
-        if ((premium.contains(e.getConnection().getName())) && (PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
+        if ((plugin.getPremiumPlayers().contains(e.getConnection().getName())) && (plugin.getPremiumDomains().contains(playerDomain))) {
             e.getConnection().setOnlineMode(true);
         }
-        if ((premium.contains(e.getConnection().getName())) && !(PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
+        if ((plugin.getPremiumPlayers().contains(e.getConnection().getName())) && !(PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
             e.getConnection().disconnect(new TextComponent(PDUtils.color(plugin.getConfig().getString("JoinFromPremium")
-                    .replaceAll("%domain_premium%", PremiumDomainRG.getInstance().getPremiumDomains().get(0)))));
+                    .replaceAll("%domain_premium%", plugin.getPremiumDomains().get(0)))));
             return;
         }
-        if (!(premium.contains(e.getConnection().getName())) && (PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
+        if (!(plugin.getPremiumPlayers().contains(e.getConnection().getName())) && (PremiumDomainRG.getInstance().getPremiumDomains().contains(playerDomain))) {
             e.getConnection().disconnect(new TextComponent(PDUtils.color(plugin.getConfig().getString("JoinFromCrack")
                     .replaceAll("%domain_crack%", plugin.getConfig().getString("DomainCrack")))));
         }
@@ -51,6 +48,7 @@ public class PlayerListener implements Listener {
             }
         }
     }
+
 
 
 }

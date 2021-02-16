@@ -15,7 +15,7 @@ public class AdminCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("premiumdomain.admin")) {
+        if (!sender.hasPermission("premiumdomainrg.admin")) {
             sender.sendMessage(new TextComponent(PDUtils.color(plugin.getConfig().getString("NoPermission"))));
             return;
         }

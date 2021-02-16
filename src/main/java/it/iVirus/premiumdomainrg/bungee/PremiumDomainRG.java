@@ -10,11 +10,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class PremiumDomainRG extends Plugin {
@@ -24,7 +24,7 @@ public class PremiumDomainRG extends Plugin {
     private Database connector;
     private File configFile;
     private final List<String> premiumDomains = new ArrayList<>();
-    private final List<String> premiumPlayers = new ArrayList<>();
+    private final Set<String> premiumPlayers = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -40,6 +40,11 @@ public class PremiumDomainRG extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new AdminCommand("apdrg"));
         ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerListener());
 
+        this.keepConnectionAlive();
+
+    }
+
+    private void keepConnectionAlive(){
         getProxy().getScheduler().schedule(this, () -> {
             try {
                 connector.getConnection().close();
@@ -48,7 +53,6 @@ public class PremiumDomainRG extends Plugin {
                 e.printStackTrace();
             }
         }, 10, getConfig().getInt("resumeTask"), TimeUnit.SECONDS);
-
     }
 
     public List<String> getPremiumDomains() {
@@ -123,7 +127,7 @@ public class PremiumDomainRG extends Plugin {
         }
     }
 
-    public List<String> getPremiumPlayers() {
+    public Set<String> getPremiumPlayers() {
         return premiumPlayers;
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>PremiumDomainRG</artifactId>
-    <version>2.1</version>
+    <version>2.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,7 +26,7 @@
         </plugins>
     </build>
     <repositories>
-        <!-- This adds the Spigot Maven repository to the build -->
+
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -45,7 +45,6 @@
 
     <dependencies>
 
-        <!--This adds the Spigot API artifact to the build -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -53,39 +52,19 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--This adds the Bukkit API artifact to the build -->
-        <!-- Do not include this in the pom.xml file if the Spigot API is already added -->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>fr.xephi</groupId>
             <artifactId>authme</artifactId>
             <version>5.6.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.47</version>
-        </dependency>
 
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.16-R0.2</version>
-            <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
-            <version>1.16-R0.2</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
+
     </dependencies>
 </project>

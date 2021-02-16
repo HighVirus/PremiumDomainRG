@@ -20,18 +20,7 @@ public class PremiumDomainRG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         connector = new Database();
         connector.setup();
-        new BukkitRunnable() {
-            @Override
-            public void run(){
-                try {
-                    connector.getConnection().close();
-                    connector.resumeConnection();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.runTaskTimer(this, 0L, getConfig().getInt("resumeTask") * 20);
-
+        this.keepConnectionAlive();
         getLogger().info("Enabled!");
     }
 
@@ -52,6 +41,20 @@ public class PremiumDomainRG extends JavaPlugin implements Listener {
         if (connector.checkPremium(e.getPlayer().getName())) {
             AuthMeApi.getInstance().forceLogin(e.getPlayer());
         }
+    }
+
+    private void keepConnectionAlive(){
+        new BukkitRunnable() {
+            @Override
+            public void run(){
+                try {
+                    connector.getConnection().close();
+                    connector.resumeConnection();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.runTaskTimer(this, 0L, getConfig().getInt("resumeTask") * 20);
     }
 
 

@@ -23,17 +23,16 @@ public class Database {
 
     public void setup() {
         try {
-            synchronized (this) {
-                if (getConnection() != null && !getConnection().isClosed()) {
-                    return;
-                }
-                Class.forName("com.mysql.jdbc.Driver");
-                setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
-                        "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
-                PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + this.table + "` " +
-                        "(ID int NOT NULL AUTO_INCREMENT,`Player` VARCHAR(100),PRIMARY KEY (ID), unique (Player))");
-                statement.executeUpdate();
+            if (getConnection() != null && !getConnection().isClosed()) {
+                return;
             }
+            Class.forName("com.mysql.jdbc.Driver");
+            setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
+                    "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
+            PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + this.table + "` " +
+                    "(ID int NOT NULL AUTO_INCREMENT,`Player` VARCHAR(100),PRIMARY KEY (ID), unique (Player))");
+            statement.executeUpdate();
+
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -51,8 +50,7 @@ public class Database {
     }
 
     public boolean checkPremium(String player) {
-        try {
-            PreparedStatement statement = getConnection().prepareStatement("SELECT * from " + this.table + " where Player = ?");
+        try (PreparedStatement statement = getConnection().prepareStatement("SELECT * from " + this.table + " where Player = ?")){
             statement.setString(1, player);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();

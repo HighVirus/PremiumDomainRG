@@ -26,25 +26,23 @@ public class Database {
 
     public void setup() {
         try {
-            synchronized (this) {
-                if (getConnection() != null && !getConnection().isClosed()) {
-                    return;
-                }
-                Class.forName("com.mysql.jdbc.Driver");
-                setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
-                        "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
-                PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + this.table + "` " +
-                        "(ID int NOT NULL AUTO_INCREMENT,`Player` VARCHAR(100),PRIMARY KEY (ID), unique (Player))");
-                statement.executeUpdate();
+            if (getConnection() != null && !getConnection().isClosed()) {
+                return;
             }
+            Class.forName("com.mysql.jdbc.Driver");
+            setConnection(DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
+                    "?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=" + this.ssl, this.username, this.password));
+            PreparedStatement statement = getConnection().prepareStatement("create TABLE if not exists `" + this.table + "` " +
+                    "(ID int NOT NULL AUTO_INCREMENT,`Player` VARCHAR(100),PRIMARY KEY (ID), unique (Player))");
+            statement.executeUpdate();
+
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void newPremiumDb(String player) {
-        try {
-            PreparedStatement statement = getConnection().prepareStatement("INSERT IGNORE INTO " + this.table + " (Player) VALUES (?)");
+        try (PreparedStatement statement = getConnection().prepareStatement("INSERT IGNORE INTO " + this.table + " (Player) VALUES (?)")){
             statement.setString(1, player);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -53,8 +51,7 @@ public class Database {
     }
 
     public void removePremiumDb(String player) {
-        try {
-            PreparedStatement statement = getConnection().prepareStatement("DELETE FROM " + this.table + " WHERE Player=?");
+        try (PreparedStatement statement = getConnection().prepareStatement("DELETE FROM " + this.table + " WHERE Player=?")) {
             statement.setString(1, player);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -110,8 +107,8 @@ public class Database {
     }
 
     private void setSSL() {
-        if (!PremiumDomainRG.getInstance().getConfig().getString("MySQL.SSL").equalsIgnoreCase("true")
-                && !PremiumDomainRG.getInstance().getConfig().getString("MySQL.SSL").equalsIgnoreCase("false")) {
+        if (!String.valueOf(PremiumDomainRG.getInstance().getConfig().get("MySQL.SSL")).equalsIgnoreCase("true")
+                && !String.valueOf(PremiumDomainRG.getInstance().getConfig().get("MySQL.SSL")).equalsIgnoreCase("false")) {
             PremiumDomainRG.getInstance().getLogger().severe("SSL cannot be different from 'true' or 'false'!");
             PremiumDomainRG.getInstance().getLogger().severe("Stopping...");
             PremiumDomainRG.getInstance().getProxy().stop();
