@@ -23,7 +23,6 @@ public class PDUtils {
             PremiumDomainRG.getInstance().getPremiumPlayers().add(player);
             PremiumDomainRG.getInstance().getConfig().set("Premium", PremiumDomainRG.getInstance().getPremiumPlayers());
             PremiumDomainRG.getInstance().save();
-            PremiumDomainRG.getInstance().reloadConfig();
             PremiumDomainRG.getInstance().getConnector().newPremiumDb(player);
             return true;
         }
@@ -36,7 +35,6 @@ public class PDUtils {
             PremiumDomainRG.getInstance().getPremiumPlayers().remove(player);
             PremiumDomainRG.getInstance().getConfig().set("Premium", PremiumDomainRG.getInstance().getPremiumPlayers());
             PremiumDomainRG.getInstance().save();
-            PremiumDomainRG.getInstance().reloadConfig();
             PremiumDomainRG.getInstance().getConnector().removePremiumDb(player);
             return true;
         }

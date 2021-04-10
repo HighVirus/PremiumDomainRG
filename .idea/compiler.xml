@@ -6,9 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="PremiumDomainRG-2.0" />
-        <module name="PremiumDomainRG-2.0.1" />
-        <module name="PremiumDomainRG-2.1" />
+        <module name="PremiumDomainRG-2.2" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8" />

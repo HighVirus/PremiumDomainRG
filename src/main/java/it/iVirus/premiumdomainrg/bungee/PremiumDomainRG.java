@@ -24,7 +24,7 @@ public class PremiumDomainRG extends Plugin {
     private Database connector;
     private File configFile;
     private final List<String> premiumDomains = new ArrayList<>();
-    private final Set<String> premiumPlayers = new HashSet<>();
+    private final List<String> premiumPlayers = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -34,7 +34,7 @@ public class PremiumDomainRG extends Plugin {
         connector = new Database();
         connector.setup();
         premiumDomains.addAll(config.getStringList("DomainPremium"));
-        premiumPlayers.addAll(getConfig().getStringList("Premium"));
+        premiumPlayers.addAll(config.getStringList("Premium"));
         premiumPlayers.forEach(connector::newPremiumDb);
         getProxy().getPluginManager().registerCommand(this, new PDCommand("premium"));
         getProxy().getPluginManager().registerCommand(this, new AdminCommand("apdrg"));
@@ -116,18 +116,14 @@ public class PremiumDomainRG extends Plugin {
     }
 
     public void reload() {
-        try {
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(getConfigFile());
-            premiumPlayers.clear();
-            premiumDomains.clear();
-            premiumDomains.addAll(config.getStringList("DomainPremium"));
-            premiumPlayers.addAll(getConfig().getStringList("Premium"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.reloadConfig();
+        premiumPlayers.clear();
+        premiumDomains.clear();
+        premiumDomains.addAll(config.getStringList("DomainPremium"));
+        premiumPlayers.addAll(getConfig().getStringList("Premium"));
     }
 
-    public Set<String> getPremiumPlayers() {
+    public List<String> getPremiumPlayers() {
         return premiumPlayers;
     }
 }
